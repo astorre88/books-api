@@ -1,0 +1,7 @@
+en:
+  errors:
+    models:
+      shop:
+        zero_copies: Expected copies_number argument is more than zero!
+        has_no_book: "Has no book with id=\"%{id}\"!"
+        too_little_copies: "Has no %{copies_number} copies of \"%{title}\" book!"
