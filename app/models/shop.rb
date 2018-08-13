@@ -7,6 +7,13 @@ class Shop < ApplicationRecord
   class BookAbsentError < StandardError; end
   class TooLittleCopiesError < StandardError; end
 
+  def self.with_sold_books(publisher_id)
+    joins(stocks: :book)
+      .where("publisher_id = #{publisher_id} and books_sold_count >= 1")
+      .group(:id)
+      .order('SUM(books_sold_count) DESC')
+  end
+
   def sell(book_id, copies_number = 1)
     copies_number = copies_number.to_i
     raise TooLittleCopiesError, I18n.t('errors.models.shop.zero_copies') if copies_number.zero?

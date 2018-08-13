@@ -6,6 +6,18 @@ class Stock < ApplicationRecord
 
   validates_uniqueness_of :book, scope: [:shop]
 
+  def self.books_sold_count(publisher_id, shop_id)
+    joins(:book)
+      .where("books.publisher_id = #{publisher_id} and shop_id = #{shop_id}")
+      .sum(:books_sold_count)
+  end
+
+  def self.copies_in_stock(book_id, shop_id)
+    joins(:book)
+      .where("books.id = #{book_id} and shop_id = #{shop_id}")
+      .sum(:copies_in_stock)
+  end
+
   def increment_copies(copies_number = 1)
     increment! :copies_in_stock, copies_number
   end

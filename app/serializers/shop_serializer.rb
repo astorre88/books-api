@@ -4,26 +4,18 @@ class ShopSerializer < ActiveModel::Serializer
   has_many :books_in_stock
 
   def books_sold_count
-    Stock.joins(:book)
-         .where("books.publisher_id = #{@instance_options[:publisher_id]} and shop_id = #{object.id}")
-         .sum(:books_sold_count)
+    Stock.books_sold_count(@instance_options[:publisher_id], object.id)
   end
 
   def books_in_stock
-    customized_books = []
-
-    object.books.where(publisher_id: @instance_options[:publisher_id]).each do |book|
-      custom_book = {
+    object.books
+          .where(publisher_id: @instance_options[:publisher_id])
+          .map do |book|
+      {
         id: book.id,
         title: book.title,
-        copies_in_stock: Stock.joins(:book)
-                              .where("books.id = #{book.id} and shop_id = #{object.id}")
-                              .sum(:copies_in_stock)
+        copies_in_stock: Stock.copies_in_stock(book.id, object.id)
       }
-
-      customized_books.push(custom_book)
     end
-
-    customized_books
   end
 end
